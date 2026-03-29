@@ -14,13 +14,22 @@ public class RentalService
         {
             throw new UnavailableEquipmentException(equipment.Id,user.Id);
         }
+        if (GetUserRentals(user.Id).Count >= user.GetMaxRentalCount())
+        {
+            throw new RentalLimitExceedException(user.Id);
+        }
+
+        if (rentTo < rentFrom || rentTo < DateTime.Now || rentFrom < DateTime.Now)
+        {
+            throw new InvalidDateRangeException(user.Id, rentFrom, rentTo);
+        }
 
         _rentals.Add(new Rental(user, equipment, rentFrom, rentTo));
         equipment.Status = EquipmentStatus.UNAVAILABLE;
     }
     public void EquipmentReturn(int rentalId)
     {
-        //Sprawdzić w tym miejscu czy nie rpzekroczono czasu
+        //Sprawdzić w tym miejscu czy nie rpzekroczono czasu 
         //i jak cos to raczej przez wyjatek to obsluzyc
         var rental=_rentals.FirstOrDefault(e=> e.Id == rentalId);
         if (rental != null)
@@ -38,6 +47,10 @@ public class RentalService
     public List<Rental> OverdueRentals()
     {
         return _rentals.Where(e=>e.DateTo < DateTime.Now).ToList();
+    }
+
+    public void GenerateReport()
+    {
     }
 
 

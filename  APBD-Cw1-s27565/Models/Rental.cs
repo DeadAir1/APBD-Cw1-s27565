@@ -14,4 +14,4 @@ public class Rental(User user,Equipment equipment,DateTime dateFrom,DateTime dat
     public DateTime DateFrom { get; set; }= dateFrom;
     public DateTime DateTo { get; set; }= dateTo;
     
-}
+} 
