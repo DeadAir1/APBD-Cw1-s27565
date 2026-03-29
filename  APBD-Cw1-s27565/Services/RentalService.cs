@@ -30,6 +30,7 @@ public class RentalService
         }
 
         _rentals.Add(new Rental(user, equipment, rentFrom, rentTo));
+        user.PenaltyRentalDate = DateTime.Today; 
         equipment.Status = EquipmentStatus.UNAVAILABLE;
     }
     public void EquipmentReturn(int rentalId)
