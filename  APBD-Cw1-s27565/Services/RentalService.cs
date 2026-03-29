@@ -19,9 +19,14 @@ public class RentalService
             throw new RentalLimitExceedException(user.Id);
         }
 
-        if (rentTo < rentFrom || rentTo < DateTime.Now || rentFrom < DateTime.Now)
+        if (rentTo < rentFrom || rentTo < DateTime.Today || rentFrom < DateTime.Today)
         {
             throw new InvalidDateRangeException(user.Id, rentFrom, rentTo);
+        }
+
+        if (user.PenaltyRentalDate > DateTime.Today)
+        {
+            throw new ActivePenaltyException(user.Id);
         }
 
         _rentals.Add(new Rental(user, equipment, rentFrom, rentTo));
@@ -29,14 +34,18 @@ public class RentalService
     }
     public void EquipmentReturn(int rentalId)
     {
-        //Sprawdzić w tym miejscu czy nie rpzekroczono czasu 
-        //i jak cos to raczej przez wyjatek to obsluzyc
         var rental=_rentals.FirstOrDefault(e=> e.Id == rentalId);
         if (rental != null)
         {
             _rentals.Remove(rental);
             rental.Equipment.Status = EquipmentStatus.AVAILABLE;
+            if(rental.DateTo<DateTime.Today)
+            {
+                var overdueDays = (DateTime.Today - rental.DateTo.Date).Days;
+                rental.User.PenaltyRentalDate = DateTime.Today.AddDays(overdueDays);
+            }
         }
+        
     }
 
     public List<Rental> GetUserRentals(int userId)
@@ -46,7 +55,7 @@ public class RentalService
 
     public List<Rental> OverdueRentals()
     {
-        return _rentals.Where(e=>e.DateTo < DateTime.Now).ToList();
+        return _rentals.Where(e=>e.DateTo < DateTime.Today).ToList();
     }
 
     public void GenerateReport()
