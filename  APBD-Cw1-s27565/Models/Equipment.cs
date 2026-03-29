@@ -1,20 +1,23 @@
+using APBD_Cw1_s27565.Enums;
+
 namespace APBD_Cw1_s27565.Models;
 
-public abstract class Equipment(int id,string name)
+public abstract class Equipment(string name)
 {
-    private int Id
+    private static int _id = 1;
+    public int Id
     {
         get;
         set;
-    } = id;
+    } = _id++;
 
-    private bool IsAvailable
+    public EquipmentStatus Status
     {
         get;
         set;
-    } = true;
+    } = EquipmentStatus.AVAILABLE;
 
-    private string Name
+    public string Name
     {
         get;
         set;
