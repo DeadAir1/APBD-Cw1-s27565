@@ -3,14 +3,15 @@ using APBD_Cw1_s27565.Models;
 
 namespace APBD_Cw1_s27565.Services;
 
-public abstract class UserService
+public  class UserService
 {
-    private  List<User> _usersExtent=new List<User>();
+    public List<User> Users { get; } = new List<User>();
     private  int _usersCount = 1;
 
-    public void CreateUser(User user)
+    public User CreateUser(User user)
     {
-        _usersExtent.Add(user);
+        Users.Add(user);
+        return user;
     }
     
 }
