@@ -7,9 +7,18 @@ public class EquipmentService
 {
     List<Equipment> _equipments=new List<Equipment>();
 
-    public void CreateEquipment(Equipment equipment)
+    public void AddEquipment(Equipment equipment)
     {
         _equipments.Add(equipment);
+    }
+
+    public Equipment GetEquipmentById(int id)
+    {
+        Equipment? equipment = _equipments.FirstOrDefault(e => e.Id == id);
+        if (equipment == null){
+            throw new Exception($"Equipment with id :{id} was not found");
+        }
+        return equipment;
     }
 
     public List<Equipment> GetEquipmentsWithSpecificStatus(EquipmentStatus requiredStatus)
@@ -20,7 +29,7 @@ public class EquipmentService
     {
         return _equipments.Where( e => e.Status == EquipmentStatus.AVAILABLE).ToList();
     }
-    public void setUnavailable(int equipmentId)
+    public void SetUnavailable(int equipmentId)
     {
         var equipment=_equipments.FirstOrDefault(e=>e.Id==equipmentId);
         if (equipment!=null)

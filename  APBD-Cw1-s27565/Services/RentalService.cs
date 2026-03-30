@@ -8,7 +8,7 @@ public class RentalService
 {
     private List<Rental> _rentals=new List<Rental>();
 
-    public void CreateRental(User user, Equipment equipment,DateTime rentFrom, DateTime rentTo)
+    public Rental CreateRental(User user, Equipment equipment,DateTime rentFrom, DateTime rentTo)
     {
         if (equipment.Status == EquipmentStatus.UNAVAILABLE)
         {
@@ -24,18 +24,23 @@ public class RentalService
             throw new InvalidDateRangeException(user.Id, rentFrom, rentTo);
         }
 
-        _rentals.Add(new Rental(user, equipment, rentFrom, rentTo));
+        Rental rental = new Rental(user, equipment, rentFrom, rentTo);
+        _rentals.Add(rental);
+        Console.WriteLine($"Equipment with id  :{equipment.Id} was rent to user with id  :{user.Id}");
         equipment.Status = EquipmentStatus.UNAVAILABLE;
+        return rental;
     }
-    public void EquipmentReturn(int rentalId)
+    public void CloseRental(int rentalId)
     {
-        //Sprawdzić w tym miejscu czy nie rpzekroczono czasu 
-        //i jak cos to raczej przez wyjatek to obsluzyc
         var rental=_rentals.FirstOrDefault(e=> e.Id == rentalId);
         if (rental != null)
         {
             _rentals.Remove(rental);
             rental.Equipment.Status = EquipmentStatus.AVAILABLE;
+        }
+        else
+        {
+            throw new Exception($"Rental with id :{rentalId} was not found");
         }
     }
 
@@ -48,10 +53,5 @@ public class RentalService
     {
         return _rentals.Where(e=>e.DateTo < DateTime.Now).ToList();
     }
-
-    public void GenerateReport()
-    {
-    }
-
 
 }
